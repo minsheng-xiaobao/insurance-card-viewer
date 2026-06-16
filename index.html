@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>民生保险消保知识自选</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "PingFang SC", "Heiti SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFF8F0 100%);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+.container { max-width: 600px; margin: 0 auto; padding: 24px 20px; }
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.brand-icon {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+  font-size: 28px;
+}
+.header h1 { font-size: 28px; font-weight: 700; color: #1F2937; margin-bottom: 6px; }
+.header p { font-size: 16px; color: #6B7280; }
+
+.agent-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.agent-section label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+.agent-section .required { color: #EF4444; }
+.agent-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  border: 2px solid #E5E7EB;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+.agent-input:focus { border-color: #FF6B6B; }
+.agent-input::placeholder { color: #9CA3AF; }
+.agent-hint {
+  font-size: 13px;
+  color: #9CA3AF;
+  margin-top: 6px;
+}
+
+.select-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.select-section .section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.select-section .section-sub {
+  font-size: 14px;
+  color: #6B7280;
+  margin-bottom: 16px;
+}
+.select-section .select-all {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #F3F4F6;
+}
+.select-all-btn {
+  font-size: 14px;
+  color: #FF6B6B;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.select-all-btn:active { background: #FFF5F5; }
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.card-item {
+  border: 2px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 16px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  position: relative;
+  background: #fff;
+}
+.card-item.selected {
+  border-color: #FF6B6B;
+  background: #FFF5F5;
+}
+.card-item .check-icon {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #E5E7EB;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  color: #fff;
+  transition: all 0.2s;
+}
+.card-item.selected .check-icon {
+  background: #FF6B6B;
+}
+.card-item .emoji {
+  font-size: 36px;
+  margin-bottom: 8px;
+  display: block;
+}
+.card-item .card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.card-item .card-desc {
+  font-size: 12px;
+  color: #9CA3AF;
+  line-height: 1.3;
+}
+.card-item.selected .card-title { color: #DC2626; }
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(255,107,107,0.3);
+  transition: transform 0.1s;
+  -webkit-appearance: none;
+}
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled {
+  background: #D1D5DB;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.footer-brand {
+  text-align: center;
+  padding: 12px 0;
+}
+.footer-brand .company {
+  font-size: 16px;
+  font-weight: 700;
+  color: #FF6B6B;
+  letter-spacing: 1px;
+}
+.footer-brand .dept {
+  font-size: 13px;
+  color: #9CA3AF;
+  margin-top: 2px;
+}
+
+.error-msg {
+  color: #EF4444;
+  font-size: 14px;
+  margin-top: 6px;
+  display: none;
+}
+
+@media (max-width: 380px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .header h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand-icon">🛡️</div>
+    <h1>消费者权益保护知识</h1>
+    <p>选择您想了解的保险话题，一键阅览</p>
+  </div>
+
+  <div class="agent-section">
+    <label>业务员信息 <span class="required">*</span></label>
+    <input type="text" class="agent-input" id="agentId" placeholder="请输入业务员工号" maxlength="20">
+    <div class="agent-hint">请填写为您服务的业务员工号，以便后续服务跟进</div>
+    <div class="error-msg" id="agentError">请填写业务员工号</div>
+  </div>
+
+  <div class="select-section">
+    <div class="section-title">📋 选择您想了解的内容</div>
+    <div class="section-sub">可选择一个或多个，我们将为您展示对应的知识卡片</div>
+    <div class="select-all">
+      <span style="font-size:14px;color:#6B7280;">已选 <strong id="selectedCount" style="color:#FF6B6B;">6</strong> 项</span>
+      <button class="select-all-btn" onclick="toggleSelectAll()">全选/取消</button>
+    </div>
+    <div class="card-grid" id="cardGrid">
+      <div class="card-item selected" data-id="1" onclick="toggleCard(this)">
+        <div class="check-icon">✓</div>
+        <span class="emoji">🏥</span>
+        <div class="card-title">住院医疗险<br>报销范围</div>
+        <div class="card-desc">住院就能全报吗</div>
+      </div>
+      <div class="card-item selected" data-id="2" onclick="toggleCard(this)">
+        <div class="check-icon">✓</div>
+        <span class="emoji">💊</span>
+        <div class="card-title">重疾险<br>确诊即赔误区</div>
+        <div class="card-desc">不是全部确诊即赔</div>
+      </div>
+      <div class="card-item selected" data-id="3" onclick="toggleCard(this)">
+        <div class="check-icon">✓</div>
+        <span class="emoji">⏰</span>
+        <div class="card-title">犹豫期/宽限期<br>复效期</div>
+        <div class="card-desc">这三个期要分清</div>
+      </div>
+      <div class="card-item selected" data-id="4" onclick="toggleCard(this)">
+        <div class="check-icon">✓</div>
+        <span class="emoji">📝</span>
+        <div class="card-title">如实告知<br>义务</div>
+        <div class="card-desc">隐瞒可能影响理赔</div>
+      </div>
+      <div class="card-item selected" data-id="5" onclick="toggleCard(this)">
+        <div class="check-icon">✓</div>
+        <span class="emoji">🚪</span>
+        <div class="card-title">等待期</div>
+        <div class="card-desc">买了多久能赔</div>
+      </div>
+      <div class="card-item selected" data-id="6" onclick="toggleCard(this)">
+        <div class="check-icon">✓</div>
+        <span class="emoji">💰</span>
+        <div class="card-title">退保损失</div>
+        <div class="card-desc">退保能拿回多少</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">开始阅览</button>
+
+  <div class="footer-brand">
+    <div class="company">民生保险安徽分公司</div>
+    <div class="dept">消费者权益保护部</div>
+  </div>
+</div>
+
+<script>
+const cardData = {
+  1: { file: '图一_住院医疗险报销范围.png', title: '住院医疗险报销范围' },
+  2: { file: '图二_重疾险确诊即赔误区.png', title: '重疾险确诊即赔误区' },
+  3: { file: '图三_犹豫期宽限期复效期.png', title: '犹豫期·宽限期·复效期' },
+  4: { file: '图四_如实告知.png', title: '如实告知义务' },
+  5: { file: '图五_等待期.png', title: '等待期' },
+  6: { file: '图六_退保损失.png', title: '退保损失' }
+};
+
+function toggleCard(el) {
+  el.classList.toggle('selected');
+  updateCount();
+}
+
+function toggleSelectAll() {
+  const all = document.querySelectorAll('.card-item');
+  const allSelected = [...all].every(c => c.classList.contains('selected'));
+  all.forEach(c => {
+    if (allSelected) c.classList.remove('selected');
+    else c.classList.add('selected');
+  });
+  updateCount();
+}
+
+function updateCount() {
+  const selected = document.querySelectorAll('.card-item.selected');
+  document.getElementById('selectedCount').textContent = selected.length;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = selected.length === 0;
+  btn.textContent = selected.length === 0 ? '请至少选择一项' : '开始阅览';
+}
+
+function submitForm() {
+  const agentId = document.getElementById('agentId').value.trim();
+  const errorEl = document.getElementById('agentError');
+  
+  if (!agentId) {
+    errorEl.style.display = 'block';
+    document.getElementById('agentId').focus();
+    return;
+  }
+  errorEl.style.display = 'none';
+  
+  const selected = [...document.querySelectorAll('.card-item.selected')].map(el => el.dataset.id);
+  if (selected.length === 0) {
+    alert('请至少选择一张图片');
+    return;
+  }
+  
+  // Umami 统计上报（等待发送完成后再跳转）
+  if (typeof umami !== 'undefined') {
+    umami.track('form_submit', {
+      agent_id: agentId,
+      selected_cards: selected.join(','),
+      card_count: selected.length
+    });
+  }
+  
+  const params = new URLSearchParams();
+  params.set('agent', agentId);
+  params.set('cards', selected.join(','));
+  
+  // 给 Umami 800ms 时间发送事件，再跳转
+  setTimeout(() => {
+    window.location.href = 'viewer.html?' + params.toString();
+  }, 800);
+}
+
+// Enter key support
+document.getElementById('agentId').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') submitForm();
+});
+</script>
+
+<!-- Umami Analytics -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="72866ec4-9ee2-4812-a5ea-3f4c83465e95"></script>
+</body>
+</html>

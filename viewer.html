@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>消保知识阅览 - 民生保险</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "PingFang SC", "Heiti SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: #1a1a1a;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.back-btn {
+  font-size: 14px;
+  color: #FF6B6B;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.back-btn:active { background: #FFF5F5; }
+.agent-info {
+  font-size: 13px;
+  color: #6B7280;
+  text-align: center;
+  flex: 1;
+}
+.agent-info strong { color: #1F2937; }
+.progress {
+  font-size: 13px;
+  color: #FF6B6B;
+  font-weight: 600;
+  min-width: 50px;
+  text-align: right;
+}
+
+.viewer-container {
+  padding-top: 56px;
+  padding-bottom: 120px;
+}
+.image-card {
+  background: #fff;
+  margin: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.image-card img {
+  width: 100%;
+  display: block;
+  border-radius: 16px 16px 0 0;
+}
+.card-meta {
+  padding: 12px 16px 14px;
+}
+.card-meta .card-num {
+  font-size: 12px;
+  color: #FF6B6B;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.card-meta .card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.confirm-section {
+  background: #fff;
+  margin: 16px;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.confirm-section h3 {
+  font-size: 18px;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+.confirm-section p {
+  font-size: 14px;
+  color: #6B7280;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.confirm-btn {
+  display: inline-block;
+  padding: 14px 40px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-appearance: none;
+  box-shadow: 0 4px 16px rgba(255,107,107,0.3);
+}
+.confirm-btn:active { transform: scale(0.98); }
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  padding: 10px 16px 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  display: flex;
+  gap: 10px;
+}
+.btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  -webkit-appearance: none;
+}
+.btn-secondary {
+  background: #F3F4F6;
+  color: #374151;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: #fff;
+}
+.btn:active { transform: scale(0.98); }
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #fff;
+}
+.empty-state .emoji { font-size: 48px; margin-bottom: 16px; }
+.empty-state h2 { font-size: 20px; margin-bottom: 8px; }
+.empty-state p { font-size: 14px; opacity: 0.7; margin-bottom: 20px; }
+
+.swipe-hint {
+  text-align: center;
+  padding: 8px 16px 20px;
+  color: #9CA3AF;
+  font-size: 13px;
+}
+
+::-webkit-scrollbar { width: 0; height: 0; }
+
+@media (min-width: 768px) {
+  .viewer-container { max-width: 600px; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+<div class="top-bar" id="topBar">
+  <button class="back-btn" onclick="goBack()">← 返回</button>
+  <div class="agent-info">业务员：<strong id="agentDisplay">--</strong></div>
+  <div class="progress" id="progressDisplay">--</div>
+</div>
+
+<div class="viewer-container" id="viewer"></div>
+
+<div class="bottom-bar" id="bottomBar" style="display:none;">
+  <button class="btn btn-secondary" onclick="goBack()">重新选择</button>
+  <button class="btn btn-primary" onclick="scrollToTop()">回到顶部</button>
+</div>
+
+<script>
+const cardData = {
+  1: { file: '图一_住院医疗险报销范围.png', title: '住院医疗险报销范围' },
+  2: { file: '图二_重疾险确诊即赔误区.png', title: '重疾险确诊即赔误区' },
+  3: { file: '图三_犹豫期宽限期复效期.png', title: '犹豫期·宽限期·复效期' },
+  4: { file: '图四_如实告知.png', title: '如实告知义务' },
+  5: { file: '图五_等待期.png', title: '等待期' },
+  6: { file: '图六_退保损失.png', title: '退保损失' }
+};
+
+const params = new URLSearchParams(window.location.search);
+const agentId = params.get('agent') || '未知';
+const cardsParam = params.get('cards');
+
+let cardIds = [];
+if (cardsParam) {
+  cardIds = cardsParam.split(',').map(Number).filter(id => cardData[id]);
+}
+
+function render() {
+  document.getElementById('agentDisplay').textContent = agentId;
+  
+  const viewer = document.getElementById('viewer');
+  
+  if (cardIds.length === 0) {
+    viewer.innerHTML = `
+      <div class="empty-state">
+        <div class="emoji">📭</div>
+        <h2>未选择任何内容</h2>
+        <p>请选择您想了解的保险知识卡片</p>
+        <button class="btn btn-primary" onclick="goBack()" style="width:auto;padding:12px 32px;">返回选择</button>
+      </div>
+    `;
+    document.getElementById('bottomBar').style.display = 'none';
+    return;
+  }
+  
+  document.getElementById('progressDisplay').textContent = `共${cardIds.length}张`;
+  document.getElementById('bottomBar').style.display = 'flex';
+  
+  let html = '';
+  cardIds.forEach((id, index) => {
+    const card = cardData[id];
+    html += `
+      <div class="image-card" data-card-id="${id}">
+        <img src="${card.file}" alt="${card.title}" loading="lazy">
+        <div class="card-meta">
+          <div class="card-num">卡片 ${index + 1} / ${cardIds.length}</div>
+          <div class="card-title">${card.title}</div>
+        </div>
+      </div>
+    `;
+  });
+  
+  html += '<div class="swipe-hint">👆 已到底部，可向上滑动返回</div>';
+  viewer.innerHTML = html;
+  
+  // Umami 统计：页面打开
+  if (typeof umami !== 'undefined') {
+    umami.track('viewer_open', {
+      agent_id: agentId,
+      card_count: cardIds.length,
+      card_ids: cardsParam
+    });
+  }
+  
+  // 滚动监听：统计图片查看和完成浏览
+  setupScrollTracking();
+}
+
+// 滚动追踪：图片查看 + 浏览完成
+const viewedCards = new Set();
+let completionTracked = false;
+function setupScrollTracking() {
+  // 图片查看统计：每张图片进入视口 50% 时记录
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const cardId = entry.target.dataset.cardId;
+        if (!viewedCards.has(cardId)) {
+          viewedCards.add(cardId);
+          if (typeof umami !== 'undefined') {
+            umami.track('card_view', {
+              agent_id: agentId,
+              card_id: cardId,
+              card_title: cardData[cardId]?.title
+            });
+          }
+        }
+      }
+    });
+  }, { threshold: 0.5 });
+  
+  document.querySelectorAll('.image-card').forEach(card => observer.observe(card));
+  
+  // 浏览完成统计：滑到底部时记录
+  window.addEventListener('scroll', () => {
+    if (completionTracked) return;
+    const scrollBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+    if (scrollBottom && cardIds.length > 0) {
+      completionTracked = true;
+      if (typeof umami !== 'undefined') {
+        umami.track('viewer_complete', {
+          agent_id: agentId,
+          card_count: cardIds.length,
+          cards_viewed: Array.from(viewedCards).join(','),
+          viewed_count: viewedCards.size
+        });
+      }
+    }
+  });
+}
+
+function goBack() {
+  window.location.href = 'index.html';
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+render();
+</script>
+
+<!-- Umami Analytics -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="72866ec4-9ee2-4812-a5ea-3f4c83465e95"></script>
+</body>
+</html>
