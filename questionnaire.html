@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>老年人消费者适当性评估问卷 - 民生保险</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 18px; }
+body {
+  font-family: "PingFang SC", "Heiti SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: #f5f5f5;
+  -webkit-font-smoothing: antialiased;
+  color: #1F2937;
+  line-height: 1.7;
+  font-size: 18px;
+  padding-bottom: 40px;
+}
+.container { max-width: 750px; margin: 0 auto; padding: 16px 14px; background: #fff; }
+
+.header {
+  text-align: center;
+  padding: 20px 0 12px;
+  border-bottom: 2px solid #FF6B6B;
+  margin-bottom: 20px;
+}
+.header .title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1F2937;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.header .subtitle {
+  font-size: 15px;
+  color: #6B7280;
+}
+.header .notice {
+  font-size: 14px;
+  color: #DC2626;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: #FEF2F2;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 600;
+}
+
+/* Step navigation */
+.step-bar {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  padding: 8px 0;
+}
+.step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #D1D5DB;
+  transition: all 0.3s;
+}
+.step-dot.active { background: #FF6B6B; width: 28px; border-radius: 5px; }
+.step-dot.done { background: #10B981; }
+
+/* Step panels */
+.step-panel {
+  display: none;
+}
+.step-panel.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #FF6B6B;
+  padding: 12px 0 16px;
+  border-bottom: 2px solid #FEE2E2;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title .num {
+  background: #FF6B6B;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.question {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #FAFAFA;
+  border-radius: 12px;
+  border-left: 4px solid #FF6B6B;
+}
+.question-label {
+  font-weight: 700;
+  font-size: 18px;
+  color: #1F2937;
+  margin-bottom: 14px;
+  display: block;
+}
+.question-label .q-num {
+  color: #FF6B6B;
+  font-weight: 800;
+  margin-right: 6px;
+  font-size: 20px;
+}
+
+/* Large inputs for elderly */
+.text-input, .textarea-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #D1D5DB;
+  border-radius: 10px;
+  font-size: 18px;
+  font-family: inherit;
+  background: #fff;
+  -webkit-appearance: none;
+}
+.text-input:focus, .textarea-input:focus {
+  outline: none;
+  border-color: #FF6B6B;
+  box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
+}
+.textarea-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Large options for elderly */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 2px solid transparent;
+  min-height: 52px;
+}
+.option:hover, .option:active {
+  border-color: #FF6B6B;
+  background: #FFF5F5;
+}
+.option.selected {
+  border-color: #FF6B6B;
+  background: #FFF5F5;
+}
+.option input[type="radio"], .option input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  accent-color: #FF6B6B;
+  flex-shrink: 0;
+}
+.option .option-text {
+  font-size: 17px;
+  color: #374151;
+  line-height: 1.5;
+}
+.option .option-input {
+  flex: 1;
+  margin-left: 8px;
+}
+.option .option-input .text-input {
+  padding: 10px 12px;
+  font-size: 17px;
+}
+
+/* Date group */
+.date-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.date-group .text-input {
+  flex: 1;
+  text-align: center;
+  min-width: 70px;
+}
+.date-group span {
+  color: #6B7280;
+  font-size: 16px;
+}
+
+/* Agent info banner (read-only) */
+.agent-banner {
+  background: #F0F9FF;
+  border: 2px solid #BAE6FD;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.agent-banner .label {
+  font-size: 14px;
+  color: #0369A1;
+  margin-bottom: 4px;
+}
+.agent-banner .value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0284C7;
+}
+.agent-banner .warning {
+  font-size: 13px;
+  color: #DC2626;
+  margin-top: 8px;
+  padding: 8px;
+  background: #FEF2F2;
+  border-radius: 6px;
+}
+
+/* P4/P5 toggle */
+.p4p5-toggle {
+  background: #F0F9FF;
+  border: 2px solid #BAE6FD;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-size: 17px;
+  color: #0369A1;
+}
+.p4p5-toggle label { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.p4p5-toggle input { accent-color: #0284C7; width: 24px; height: 24px; }
+
+/* Navigation buttons */
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #E5E7EB;
+}
+.nav-btn {
+  flex: 1;
+  padding: 16px 24px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  font-family: inherit;
+  text-align: center;
+}
+.nav-btn-prev {
+  background: #F3F4F6;
+  color: #374151;
+}
+.nav-btn-next, .nav-btn-submit {
+  background: #FF6B6B;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+.nav-btn:disabled {
+  background: #D1D5DB;
+  color: #9CA3AF;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Signature */
+.signature-section {
+  background: #fff;
+  border: 3px solid #FEE2E2;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.signature-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.signature-canvas-wrap {
+  border: 2px dashed #CBD5E1;
+  border-radius: 12px;
+  background: #FAFAFA;
+  position: relative;
+  overflow: hidden;
+}
+.signature-canvas-wrap canvas {
+  width: 100%;
+  height: 240px;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}
+.signature-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #9CA3AF;
+  font-size: 16px;
+  pointer-events: none;
+  text-align: center;
+}
+.signature-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  justify-content: center;
+}
+.signature-btn {
+  padding: 12px 24px;
+  border: 2px solid #D1D5DB;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #374151;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+}
+
+/* Declaration */
+.declaration {
+  background: #FEF3C7;
+  border: 2px solid #FDE68A;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #92400E;
+  line-height: 1.8;
+}
+.declaration strong { color: #78350F; font-size: 18px; }
+
+/* Footer */
+.footer-brand {
+  text-align: center;
+  padding: 24px 0 0;
+  border-top: 1px solid #E5E7EB;
+  margin-top: 20px;
+}
+.footer-brand .company { font-size: 16px; font-weight: 700; color: #FF6B6B; letter-spacing: 1px; }
+.footer-brand .dept { font-size: 14px; color: #9CA3AF; margin-top: 4px; }
+
+/* Hidden */
+.hidden { display: none !important; }
+
+/* Warning for missing agent */
+.missing-agent {
+  background: #FEF2F2;
+  border: 2px solid #FCA5A5;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.missing-agent .title { font-size: 18px; font-weight: 700; color: #DC2626; margin-bottom: 8px; }
+.missing-agent .desc { font-size: 15px; color: #991B1B; margin-bottom: 12px; }
+.missing-agent input { max-width: 200px; margin: 0 auto; display: block; }
+
+/* Responsive */
+@media (max-width: 600px) {
+  html { font-size: 16px; }
+  .container { padding: 12px; }
+  .header .title { font-size: 20px; }
+  .option { padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="questionnaire">
+
+<!-- Header -->
+<div class="header">
+  <div class="title">老年人消费者适当性评估问卷</div>
+  <div class="subtitle">适用对象：年满65周岁及以上投保自然人</div>
+  <div class="notice">⚠️ 须本人亲自作答；因身体、文化原因无法独立填写的，仅可由家属协助朗读题目，<strong>严禁销售人员代为作答、诱导勾选</strong>。</div>
+</div>
+
+<!-- Step bar -->
+<div class="step-bar" id="stepBar">
+  <div class="step-dot active"></div>
+  <div class="step-dot"></div>
+  <div class="step-dot"></div>
+  <div class="step-dot"></div>
+  <div class="step-dot"></div>
+</div>
+
+<!-- Agent info (manual input) -->
+<div class="agent-info">
+  <div class="agent-info-title">📋 业务员信息（请业务员填写）</div>
+  <div class="agent-info-row">
+    <div class="field">
+      <div class="field-label">业务员工号 <span style="color:#DC2626">*</span></div>
+      <input type="text" class="text-input" id="agentId" placeholder="请输入业务员工号">
+    </div>
+    <div class="field">
+      <div class="field-label">业务员姓名 <span style="color:#DC2626">*</span></div>
+      <input type="text" class="text-input" id="agentName" placeholder="请输入业务员姓名">
+    </div>
+  </div>
+  <div class="agent-info-row">
+    <div class="field">
+      <div class="field-label">投保人姓名 <span style="color:#DC2626">*</span></div>
+      <input type="text" class="text-input" id="customerName" placeholder="请输入投保人姓名">
+    </div>
+    <div class="field">
+      <div class="field-label">投保人身份证号 <span style="color:#DC2626">*</span></div>
+      <input type="text" class="text-input" id="customerId" placeholder="请输入18位身份证号码">
+    </div>
+  </div>
+</div>
+
+<!-- ====== STEP 1: Customer Basic Info ====== -->
+<div class="step-panel active" data-step="1">
+  <div class="section-title"><span class="num">一</span>客户基本信息</div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">1.</span>姓名</label>
+    <input type="text" class="text-input" id="q1" placeholder="请输入您的姓名">
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">2.</span>性别</label>
+    <div class="options" id="opts-q2">
+      <div class="option" onclick="selectRadio('q2','男')"><input type="radio" name="q2" value="男" id="q2-1"><span class="option-text">男</span></div>
+      <div class="option" onclick="selectRadio('q2','女')"><input type="radio" name="q2" value="女" id="q2-2"><span class="option-text">女</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">3.</span>出生日期</label>
+    <div class="date-group">
+      <input type="number" class="text-input" id="q3-year" placeholder="年" min="1900" max="2025">
+      <span>年</span>
+      <input type="number" class="text-input" id="q3-month" placeholder="月" min="1" max="12">
+      <span>月</span>
+      <input type="number" class="text-input" id="q3-day" placeholder="日" min="1" max="31">
+      <span>日</span>
+      <span>年龄：</span>
+      <input type="number" class="text-input" id="q3-age" placeholder="周岁" style="width:80px;" min="65" max="120">
+      <span>周岁</span>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">4.</span>身份证号码</label>
+    <input type="text" class="text-input" id="q4" maxlength="18" placeholder="请输入18位身份证号码">
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">5.</span>联系电话</label>
+    <input type="tel" class="text-input" id="q5" placeholder="请输入手机号码">
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">6.</span>常住地址</label>
+    <input type="text" class="text-input" id="q6" placeholder="请输入详细地址">
+  </div>
+
+  <div class="nav-buttons">
+    <div></div>
+    <button class="nav-btn nav-btn-next" onclick="goStep(2)">下一步 →</button>
+  </div>
+</div>
+
+<!-- ====== STEP 2: Health & Needs ====== -->
+<div class="step-panel" data-step="2">
+  <div class="section-title"><span class="num">二</span>健康状况与保障需求</div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">7.</span>健康状况</label>
+    <div class="options" id="opts-q7">
+      <div class="option" onclick="selectRadio('q7','良好')"><input type="radio" name="q7" value="良好" id="q7-1"><span class="option-text">良好</span></div>
+      <div class="option" onclick="selectRadio('q7','一般')"><input type="radio" name="q7" value="一般" id="q7-2"><span class="option-text">一般</span></div>
+      <div class="option" onclick="selectRadio('q7','较差')"><input type="radio" name="q7" value="较差" id="q7-3"><span class="option-text">较差</span></div>
+      <div class="option" onclick="selectRadio('q7','有既往重大疾病史')"><input type="radio" name="q7" value="有既往重大疾病史" id="q7-4"><span class="option-text">有既往重大疾病史</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">8.</span>认知能力</label>
+    <div class="options" id="opts-q8">
+      <div class="option" onclick="selectRadio('q8','清晰可独立判断')"><input type="radio" name="q8" value="清晰可独立判断" id="q8-1"><span class="option-text">清晰可独立判断</span></div>
+      <div class="option" onclick="selectRadio('q8','需他人辅助理解')"><input type="radio" name="q8" value="需他人辅助理解" id="q8-2"><span class="option-text">需他人辅助理解</span></div>
+      <div class="option" onclick="selectRadio('q8','认知能力较弱')"><input type="radio" name="q8" value="认知能力较弱" id="q8-3"><span class="option-text">认知能力较弱</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">9.</span>居住情况</label>
+    <div class="options" id="opts-q9">
+      <div class="option" onclick="selectRadio('q9','与家人同住')"><input type="radio" name="q9" value="与家人同住" id="q9-1"><span class="option-text">与家人同住</span></div>
+      <div class="option" onclick="selectRadio('q9','独居')"><input type="radio" name="q9" value="独居" id="q9-2"><span class="option-text">独居</span></div>
+      <div class="option" onclick="selectRadio('q9','养老院居住')"><input type="radio" name="q9" value="养老院居住" id="q9-3"><span class="option-text">养老院居住</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">10.</span>紧急联系人（姓名、关系、电话）</label>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+      <input type="text" class="text-input" id="q10-name" placeholder="姓名">
+      <input type="text" class="text-input" id="q10-relation" placeholder="关系（如：儿子、女儿）">
+      <input type="tel" class="text-input" id="q10-phone" placeholder="联系电话">
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn nav-btn-prev" onclick="goStep(1)">← 上一步</button>
+    <button class="nav-btn nav-btn-next" onclick="goStep(3)">下一步 →</button>
+  </div>
+</div>
+
+<!-- ====== STEP 3: Financial Assessment ====== -->
+<div class="step-panel" data-step="3">
+  <div class="section-title"><span class="num">三</span>财务支付水平评估</div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">11.</span>本次投保主要需求（可多选）</label>
+    <div class="options" id="opts-q11">
+      <div class="option" onclick="toggleCheckbox(this,'q11','医疗保障')"><input type="checkbox" name="q11" value="医疗保障"><span class="option-text">医疗保障</span></div>
+      <div class="option" onclick="toggleCheckbox(this,'q11','重疾保障')"><input type="checkbox" name="q11" value="重疾保障"><span class="option-text">重疾保障</span></div>
+      <div class="option" onclick="toggleCheckbox(this,'q11','养老保障')"><input type="checkbox" name="q11" value="养老保障"><span class="option-text">养老保障</span></div>
+      <div class="option" onclick="toggleCheckbox(this,'q11','意外保障')"><input type="checkbox" name="q11" value="意外保障"><span class="option-text">意外保障</span></div>
+      <div class="option" onclick="toggleCheckbox(this,'q11','财富传承')"><input type="checkbox" name="q11" value="财富传承"><span class="option-text">财富传承</span></div>
+      <div class="option" style="align-items:center;" onclick="toggleCheckbox(this,'q11','其他')">
+        <input type="checkbox" name="q11" value="其他">
+        <span class="option-text">其他</span>
+        <input type="text" class="text-input option-input" id="q11-other" placeholder="请说明" style="width:140px;">
+      </div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">12.</span>已购买同类保险情况</label>
+    <div class="options" id="opts-q12">
+      <div class="option" onclick="selectRadio('q12','无')"><input type="radio" name="q12" value="无" id="q12-1"><span class="option-text">无</span></div>
+      <div class="option" style="align-items:center;" onclick="selectRadio('q12','有')">
+        <input type="radio" name="q12" value="有" id="q12-2">
+        <span class="option-text">有</span>
+        <span class="option-input"><input type="text" class="text-input" id="q12-detail" placeholder="请说明险种与保额"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">13.</span>期望保险期限</label>
+    <div class="options" id="opts-q13">
+      <div class="option" onclick="selectRadio('q13','1年及以下')"><input type="radio" name="q13" value="1年及以下" id="q13-1"><span class="option-text">1年及以下</span></div>
+      <div class="option" onclick="selectRadio('q13','1-5年')"><input type="radio" name="q13" value="1-5年" id="q13-2"><span class="option-text">1-5年</span></div>
+      <div class="option" onclick="selectRadio('q13','5-10年')"><input type="radio" name="q13" value="5-10年" id="q13-3"><span class="option-text">5-10年</span></div>
+      <div class="option" onclick="selectRadio('q13','10年以上')"><input type="radio" name="q13" value="10年以上" id="q13-4"><span class="option-text">10年以上</span></div>
+      <div class="option" onclick="selectRadio('q13','终身')"><input type="radio" name="q13" value="终身" id="q13-5"><span class="option-text">终身</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">14.</span>期望交费方式</label>
+    <div class="options" id="opts-q14">
+      <div class="option" onclick="selectRadio('q14','趸交')"><input type="radio" name="q14" value="趸交" id="q14-1"><span class="option-text">趸交</span></div>
+      <div class="option" onclick="selectRadio('q14','年期交')"><input type="radio" name="q14" value="年期交" id="q14-2"><span class="option-text">年期交</span></div>
+      <div class="option" onclick="selectRadio('q14','半年交')"><input type="radio" name="q14" value="半年交" id="q14-3"><span class="option-text">半年交</span></div>
+      <div class="option" onclick="selectRadio('q14','季交')"><input type="radio" name="q14" value="季交" id="q14-4"><span class="option-text">季交</span></div>
+      <div class="option" onclick="selectRadio('q14','月交')"><input type="radio" name="q14" value="月交" id="q14-5"><span class="option-text">月交</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">15.</span>个人月均收入</label>
+    <div class="options" id="opts-q15">
+      <div class="option" onclick="selectRadio('q15','2000元及以下')"><input type="radio" name="q15" value="2000元及以下" id="q15-1"><span class="option-text">2000元及以下</span></div>
+      <div class="option" onclick="selectRadio('q15','2001-5000元')"><input type="radio" name="q15" value="2001-5000元" id="q15-2"><span class="option-text">2001-5000元</span></div>
+      <div class="option" onclick="selectRadio('q15','5001-10000元')"><input type="radio" name="q15" value="5001-10000元" id="q15-3"><span class="option-text">5001-10000元</span></div>
+      <div class="option" onclick="selectRadio('q15','10001元以上')"><input type="radio" name="q15" value="10001元以上" id="q15-4"><span class="option-text">10001元以上</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">16.</span>家庭月均总收入</label>
+    <div class="options" id="opts-q16">
+      <div class="option" onclick="selectRadio('q16','5000元及以下')"><input type="radio" name="q16" value="5000元及以下" id="q16-1"><span class="option-text">5000元及以下</span></div>
+      <div class="option" onclick="selectRadio('q16','5001-10000元')"><input type="radio" name="q16" value="5001-10000元" id="q16-2"><span class="option-text">5001-10000元</span></div>
+      <div class="option" onclick="selectRadio('q16','10001-20000元')"><input type="radio" name="q16" value="10001-20000元" id="q16-3"><span class="option-text">10001-20000元</span></div>
+      <div class="option" onclick="selectRadio('q16','20001元以上')"><input type="radio" name="q16" value="20001元以上" id="q16-4"><span class="option-text">20001元以上</span></div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn nav-btn-prev" onclick="goStep(2)">← 上一步</button>
+    <button class="nav-btn nav-btn-next" onclick="goStep(4)">下一步 →</button>
+  </div>
+</div>
+
+<!-- ====== STEP 4: More Financial + Risk Toggle ====== -->
+<div class="step-panel" data-step="4">
+  <div class="section-title"><span class="num">四</span>财务评估（续）</div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">17.</span>个人金融资产（存款、理财等）</label>
+    <div class="options" id="opts-q17">
+      <div class="option" onclick="selectRadio('q17','5万元及以下')"><input type="radio" name="q17" value="5万元及以下" id="q17-1"><span class="option-text">5万元及以下</span></div>
+      <div class="option" onclick="selectRadio('q17','5-20万元')"><input type="radio" name="q17" value="5-20万元" id="q17-2"><span class="option-text">5-20万元</span></div>
+      <div class="option" onclick="selectRadio('q17','20-50万元')"><input type="radio" name="q17" value="20-50万元" id="q17-3"><span class="option-text">20-50万元</span></div>
+      <div class="option" onclick="selectRadio('q17','50万元以上')"><input type="radio" name="q17" value="50万元以上" id="q17-4"><span class="option-text">50万元以上</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">18.</span>年度可用于保险支出预算</label>
+    <div class="options" id="opts-q18">
+      <div class="option" onclick="selectRadio('q18','5000元及以下')"><input type="radio" name="q18" value="5000元及以下" id="q18-1"><span class="option-text">5000元及以下</span></div>
+      <div class="option" onclick="selectRadio('q18','5001-20000元')"><input type="radio" name="q18" value="5001-20000元" id="q18-2"><span class="option-text">5001-20000元</span></div>
+      <div class="option" onclick="selectRadio('q18','20001-50000元')"><input type="radio" name="q18" value="20001-50000元" id="q18-3"><span class="option-text">20001-50000元</span></div>
+      <div class="option" onclick="selectRadio('q18','50000元以上')"><input type="radio" name="q18" value="50000元以上" id="q18-4"><span class="option-text">50000元以上</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">19.</span>本次拟交保费占家庭年收入比例</label>
+    <div class="options" id="opts-q19">
+      <div class="option" onclick="selectRadio('q19','10%及以下')"><input type="radio" name="q19" value="10%及以下" id="q19-1"><span class="option-text">10%及以下</span></div>
+      <div class="option" onclick="selectRadio('q19','11%-20%')"><input type="radio" name="q19" value="11%-20%" id="q19-2"><span class="option-text">11%-20%</span></div>
+      <div class="option" onclick="selectRadio('q19','21%-30%')"><input type="radio" name="q19" value="21%-30%" id="q19-3"><span class="option-text">21%-30%</span></div>
+      <div class="option" onclick="selectRadio('q19','30%以上')"><input type="radio" name="q19" value="30%以上" id="q19-4"><span class="option-text">30%以上</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">20.</span>是否存在大额负债</label>
+    <div class="options" id="opts-q20">
+      <div class="option" onclick="selectRadio('q20','无')"><input type="radio" name="q20" value="无" id="q20-1"><span class="option-text">无</span></div>
+      <div class="option" style="align-items:center;" onclick="selectRadio('q20','有')">
+        <input type="radio" name="q20" value="有" id="q20-2">
+        <span class="option-text">有</span>
+        <span class="option-input"><input type="text" class="text-input" id="q20-detail" placeholder="房贷/车贷/其他"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- P4/P5 Toggle -->
+  <div class="p4p5-toggle">
+    <label><input type="checkbox" id="p4p5Checkbox" onchange="toggleP4P5()"><strong>本次投保产品为P4/P5级（需填写风险承受能力评估）</strong></label>
+  </div>
+
+  <div class="hidden" id="riskSection">
+    <div class="section-title" style="margin-top:24px;"><span class="num">五</span>风险承受能力评估</div>
+
+    <div class="question">
+      <label class="question-label"><span class="q-num">21.</span>投资经验</label>
+      <div class="options" id="opts-q21">
+        <div class="option" onclick="selectRadio('q21','无任何投资经验')"><input type="radio" name="q21" value="无任何投资经验" id="q21-1"><span class="option-text">无任何投资经验</span></div>
+        <div class="option" onclick="selectRadio('q21','1-3年')"><input type="radio" name="q21" value="1-3年" id="q21-2"><span class="option-text">1-3年</span></div>
+        <div class="option" onclick="selectRadio('q21','3-5年')"><input type="radio" name="q21" value="3-5年" id="q21-3"><span class="option-text">3-5年</span></div>
+        <div class="option" onclick="selectRadio('q21','5年以上')"><input type="radio" name="q21" value="5年以上" id="q21-4"><span class="option-text">5年以上</span></div>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="question-label"><span class="q-num">22.</span>可接受的投资损失程度</label>
+      <div class="options" id="opts-q22">
+        <div class="option" onclick="selectRadio('q22','不能接受任何本金损失')"><input type="radio" name="q22" value="不能接受任何本金损失" id="q22-1"><span class="option-text">不能接受任何本金损失</span></div>
+        <div class="option" onclick="selectRadio('q22','可接受5%以内损失')"><input type="radio" name="q22" value="可接受5%以内损失" id="q22-2"><span class="option-text">可接受5%以内损失</span></div>
+        <div class="option" onclick="selectRadio('q22','可接受5%-10%损失')"><input type="radio" name="q22" value="可接受5%-10%损失" id="q22-3"><span class="option-text">可接受5%-10%损失</span></div>
+        <div class="option" onclick="selectRadio('q22','可接受10%以上损失')"><input type="radio" name="q22" value="可接受10%以上损失" id="q22-4"><span class="option-text">可接受10%以上损失</span></div>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="question-label"><span class="q-num">23.</span>投资目的</label>
+      <div class="options" id="opts-q23">
+        <div class="option" onclick="selectRadio('q23','保本保值')"><input type="radio" name="q23" value="保本保值" id="q23-1"><span class="option-text">保本保值</span></div>
+        <div class="option" onclick="selectRadio('q23','稳健增值')"><input type="radio" name="q23" value="稳健增值" id="q23-2"><span class="option-text">稳健增值</span></div>
+        <div class="option" onclick="selectRadio('q23','追求较高收益')"><input type="radio" name="q23" value="追求较高收益" id="q23-3"><span class="option-text">追求较高收益</span></div>
+        <div class="option" onclick="selectRadio('q23','追求高收益')"><input type="radio" name="q23" value="追求高收益" id="q23-4"><span class="option-text">追求高收益</span></div>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="question-label"><span class="q-num">24.</span>投资期限偏好</label>
+      <div class="options" id="opts-q24">
+        <div class="option" onclick="selectRadio('q24','1年及以下')"><input type="radio" name="q24" value="1年及以下" id="q24-1"><span class="option-text">1年及以下</span></div>
+        <div class="option" onclick="selectRadio('q24','1-3年')"><input type="radio" name="q24" value="1-3年" id="q24-2"><span class="option-text">1-3年</span></div>
+        <div class="option" onclick="selectRadio('q24','3-5年')"><input type="radio" name="q24" value="3-5年" id="q24-3"><span class="option-text">3-5年</span></div>
+        <div class="option" onclick="selectRadio('q24','5年以上')"><input type="radio" name="q24" value="5年以上" id="q24-4"><span class="option-text">5年以上</span></div>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="question-label"><span class="q-num">25.</span>风险偏好</label>
+      <div class="options" id="opts-q25">
+        <div class="option" onclick="selectRadio('q25','保守型')"><input type="radio" name="q25" value="保守型" id="q25-1"><span class="option-text">保守型</span></div>
+        <div class="option" onclick="selectRadio('q25','稳健型')"><input type="radio" name="q25" value="稳健型" id="q25-2"><span class="option-text">稳健型</span></div>
+        <div class="option" onclick="selectRadio('q25','平衡型')"><input type="radio" name="q25" value="平衡型" id="q25-3"><span class="option-text">平衡型</span></div>
+        <div class="option" onclick="selectRadio('q25','进取型')"><input type="radio" name="q25" value="进取型" id="q25-4"><span class="option-text">进取型</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn nav-btn-prev" onclick="goStep(3)">← 上一步</button>
+    <button class="nav-btn nav-btn-next" onclick="goStep(5)">下一步 →</button>
+  </div>
+</div>
+
+<!-- ====== STEP 5: Confirmation + Signature ====== -->
+<div class="step-panel" data-step="5">
+  <div class="section-title"><span class="num">六</span>特殊告知与确认</div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">26.</span>本人已清楚了解所投保产品的保障范围、交费期限、保险责任、免责条款、犹豫期及退保损失。</label>
+    <div class="options" id="opts-q26">
+      <div class="option" onclick="selectRadio('q26','是')"><input type="radio" name="q26" value="是" id="q26-1"><span class="option-text">是</span></div>
+      <div class="option" onclick="selectRadio('q26','否')"><input type="radio" name="q26" value="否" id="q26-2"><span class="option-text">否</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">27.</span>销售人员已就产品风险、收益不确定性向本人进行通俗讲解，本人已完全理解。</label>
+    <div class="options" id="opts-q27">
+      <div class="option" onclick="selectRadio('q27','是')"><input type="radio" name="q27" value="是" id="q27-1"><span class="option-text">是</span></div>
+      <div class="option" onclick="selectRadio('q27','否')"><input type="radio" name="q27" value="否" id="q27-2"><span class="option-text">否</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">28.</span>本人确认本次投保为真实意愿，未受诱导、误导。</label>
+    <div class="options" id="opts-q28">
+      <div class="option" onclick="selectRadio('q28','是')"><input type="radio" name="q28" value="是" id="q28-1"><span class="option-text">是</span></div>
+      <div class="option" onclick="selectRadio('q28','否')"><input type="radio" name="q28" value="否" id="q28-2"><span class="option-text">否</span></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <label class="question-label"><span class="q-num">29.</span>直系亲属是否知晓本次投保</label>
+    <div class="options" id="opts-q29">
+      <div class="option" onclick="selectRadio('q29','是')"><input type="radio" name="q29" value="是" id="q29-1"><span class="option-text">是</span></div>
+      <div class="option" onclick="selectRadio('q29','否')"><input type="radio" name="q29" value="否" id="q29-2"><span class="option-text">否</span></div>
+    </div>
+  </div>
+
+  <!-- Declaration -->
+  <div class="declaration">
+    <strong>填写声明</strong><br>
+    本人确认以上所填信息真实、准确、完整，无隐瞒、虚假情况。本人知晓提供虚假信息可能影响适当性评估结果及自身权益。
+  </div>
+
+  <!-- Signature -->
+  <div class="signature-section">
+    <div class="signature-section-title">✍️ 投保人签字</div>
+    <div class="signature-canvas-wrap" id="signatureWrap">
+      <canvas id="signatureCanvas"></canvas>
+      <div class="signature-placeholder" id="sigPlaceholder">请用手指在此区域签名</div>
+    </div>
+    <div class="signature-actions">
+      <button class="signature-btn" onclick="clearSignature()">🗑️ 清空</button>
+      <button class="signature-btn" onclick="undoSignature()">↩️ 撤销</button>
+    </div>
+  </div>
+
+  <!-- Date -->
+  <div class="question" style="border-left-color:#9CA3AF;">
+    <label class="question-label">填写日期</label>
+    <div class="date-group">
+      <input type="number" class="text-input" id="fillYear" placeholder="年">
+      <span>年</span>
+      <input type="number" class="text-input" id="fillMonth" placeholder="月">
+      <span>月</span>
+      <input type="number" class="text-input" id="fillDay" placeholder="日">
+      <span>日</span>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn nav-btn-prev" onclick="goStep(4)">← 上一步</button>
+    <button class="nav-btn nav-btn-submit" onclick="submitQuestionnaire()">✅ 确认提交并保存</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer-brand">
+  <div class="company">民生保险安徽分公司</div>
+  <div class="dept">消费者权益保护部</div>
+</div>
+
+</div><!-- end container -->
+
+<!-- html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- Umami -->
+<script async src="https://cloud.umami.is/script.js" data-website-id="72866ec4-9ee2-4812-a5ea-3f4c83465e95"></script>
+
+<script>
+// =====================
+// Agent from URL
+// =====================
+let agentId = '';
+let agentName = '';
+
+// Agent info is now filled on the page by the salesperson
+// No URL parameter needed
+
+// =====================
+// Step navigation
+// =====================
+let currentStep = 1;
+const totalSteps = 5;
+
+function updateStepBar() {
+  const dots = document.querySelectorAll('.step-dot');
+  dots.forEach((dot, i) => {
+    dot.classList.remove('active', 'done');
+    if (i + 1 < currentStep) dot.classList.add('done');
+    else if (i + 1 === currentStep) dot.classList.add('active');
+  });
+}
+
+function goStep(step) {
+  // Validate current step before leaving
+  if (step > currentStep) {
+    const err = validateStep(currentStep);
+    if (err) { alert('⚠️ ' + err); return; }
+  }
+
+  document.querySelector('.step-panel.active').classList.remove('active');
+  document.querySelector('.step-panel[data-step="' + step + '"]').classList.add('active');
+  currentStep = step;
+  updateStepBar();
+  window.scrollTo(0, 0);
+}
+
+function validateStep(step) {
+  if (step === 1) {
+    if (!document.getElementById('q1').value.trim()) return '请填写姓名';
+    if (!document.querySelector('input[name="q2"]:checked')) return '请选择性别';
+    if (!document.getElementById('q3-year').value || !document.getElementById('q3-month').value || !document.getElementById('q3-day').value) return '请填写完整出生日期';
+    if (!document.getElementById('q3-age').value) return '请填写年龄';
+    if (!document.getElementById('q4').value.trim()) return '请填写身份证号码';
+    if (!document.getElementById('q5').value.trim()) return '请填写联系电话';
+    if (!document.getElementById('q6').value.trim()) return '请填写常住地址';
+  }
+  if (step === 2) {
+    for (let q of [7,8,9]) {
+      if (!document.querySelector('input[name="q' + q + '"]:checked')) return '请回答第' + q + '题';
+    }
+    if (!document.getElementById('q10-name').value || !document.getElementById('q10-relation').value || !document.getElementById('q10-phone').value) {
+      return '请填写完整的紧急联系人信息';
+    }
+  }
+  if (step === 3) {
+    const q11 = document.querySelectorAll('input[name="q11"]:checked');
+    if (q11.length === 0) return '请选择投保需求（第11题）';
+    if (!document.querySelector('input[name="q12"]:checked')) return '请回答第12题';
+    if (!document.querySelector('input[name="q13"]:checked')) return '请回答第13题';
+    if (!document.querySelector('input[name="q14"]:checked')) return '请回答第14题';
+    if (!document.querySelector('input[name="q15"]:checked')) return '请回答第15题';
+    if (!document.querySelector('input[name="q16"]:checked')) return '请回答第16题';
+  }
+  if (step === 4) {
+    if (!document.querySelector('input[name="q17"]:checked')) return '请回答第17题';
+    if (!document.querySelector('input[name="q18"]:checked')) return '请回答第18题';
+    if (!document.querySelector('input[name="q19"]:checked')) return '请回答第19题';
+    if (!document.querySelector('input[name="q20"]:checked')) return '请回答第20题';
+    const isP4P5 = document.getElementById('p4p5Checkbox').checked;
+    if (isP4P5) {
+      for (let q of [21,22,23,24,25]) {
+        if (!document.querySelector('input[name="q' + q + '"]:checked')) return '请回答第' + q + '题（P4/P5风险评估必填）';
+      }
+    }
+  }
+  if (step === 5) {
+    for (let q of [26,27,28,29]) {
+      if (!document.querySelector('input[name="q' + q + '"]:checked')) return '请回答第' + q + '题';
+    }
+  }
+  return null;
+}
+
+// =====================
+// UI helpers
+// =====================
+function selectRadio(name, value) {
+  const input = document.getElementById(name + '-' + value) || document.querySelector('input[name="' + name + '"][value="' + value + '"]');
+  if (input) {
+    input.checked = true;
+    // Visual selection
+    const parent = input.closest('.options');
+    if (parent) {
+      parent.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+      input.closest('.option').classList.add('selected');
+    }
+  }
+}
+
+function toggleCheckbox(el, name, value) {
+  const input = el.querySelector('input[type="checkbox"]');
+  input.checked = !input.checked;
+  el.classList.toggle('selected', input.checked);
+}
+
+function toggleP4P5() {
+  document.getElementById('riskSection').classList.toggle('hidden', !document.getElementById('p4p5Checkbox').checked);
+}
+
+// =====================
+// Auto-fill date
+// =====================
+const today = new Date();
+document.getElementById('fillYear').value = today.getFullYear();
+document.getElementById('fillMonth').value = today.getMonth() + 1;
+document.getElementById('fillDay').value = today.getDate();
+
+// =====================
+// Signature Canvas
+// =====================
+const canvas = document.getElementById('signatureCanvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('signatureWrap');
+const placeholder = document.getElementById('sigPlaceholder');
+let drawing = false;
+let strokes = [];
+let currentStroke = [];
+
+function resizeCanvas() {
+  const rect = wrap.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = 240 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '240px';
+  ctx.scale(dpr, dpr);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = '#1F2937';
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+function startDraw(e) {
+  e.preventDefault();
+  drawing = true;
+  const pos = getPos(e);
+  currentStroke = [pos];
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+  placeholder.style.display = 'none';
+}
+function draw(e) {
+  if (!drawing) return;
+  e.preventDefault();
+  const pos = getPos(e);
+  currentStroke.push(pos);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
+}
+function endDraw(e) {
+  if (!drawing) return;
+  drawing = false;
+  strokes.push([...currentStroke]);
+  currentStroke = [];
+}
+
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', endDraw);
+canvas.addEventListener('mouseleave', endDraw);
+canvas.addEventListener('touchstart', startDraw, { passive: false });
+canvas.addEventListener('touchmove', draw, { passive: false });
+canvas.addEventListener('touchend', endDraw);
+
+function clearSignature() {
+  const dpr = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+  strokes = [];
+  placeholder.style.display = 'block';
+}
+function undoSignature() {
+  if (strokes.length === 0) return;
+  strokes.pop();
+  redrawAll();
+}
+function redrawAll() {
+  const dpr = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+  if (strokes.length === 0) { placeholder.style.display = 'block'; return; }
+  placeholder.style.display = 'none';
+  for (const stroke of strokes) {
+    if (stroke.length === 0) continue;
+    ctx.beginPath(); ctx.moveTo(stroke[0].x, stroke[0].y);
+    for (let i = 1; i < stroke.length; i++) ctx.lineTo(stroke[i].x, stroke[i].y);
+    ctx.stroke();
+  }
+}
+
+// =====================
+// Collect & Submit
+// =====================
+function collectData() {
+  // Read from page inputs (filled by salesperson on the spot)
+  agentId = document.getElementById('agentId').value.trim();
+  agentName = document.getElementById('agentName').value.trim();
+
+  const data = {
+    agentId: agentId,
+    agentName: agentName,
+    customerName: document.getElementById('q1').value.trim(),
+    customerId: document.getElementById('q4').value.trim(),
+    fillDate: document.getElementById('fillYear').value + '-' + document.getElementById('fillMonth').value + '-' + document.getElementById('fillDay').value,
+    answers: {},
+    hasSignature: strokes.length > 0,
+    isP4P5: document.getElementById('p4p5Checkbox').checked
+  };
+
+  for (let i = 1; i <= 29; i++) {
+    const radios = document.querySelectorAll('input[name="q' + i + '"]');
+    if (radios.length > 0) {
+      const checked = document.querySelector('input[name="q' + i + '"]:checked');
+      data.answers['q' + i] = checked ? checked.value : '';
+    }
+  }
+  data.answers['q1'] = document.getElementById('q1').value;
+  data.answers['q4'] = document.getElementById('q4').value;
+  data.answers['q5'] = document.getElementById('q5').value;
+  data.answers['q6'] = document.getElementById('q6').value;
+  data.answers['q3'] = document.getElementById('q3-year').value + '-' + document.getElementById('q3-month').value + '-' + document.getElementById('q3-day').value;
+  data.answers['q3-age'] = document.getElementById('q3-age').value;
+  data.answers['q10'] = document.getElementById('q10-name').value + ' / ' + document.getElementById('q10-relation').value + ' / ' + document.getElementById('q10-phone').value;
+  data.answers['q12-detail'] = document.getElementById('q12-detail').value;
+  data.answers['q20-detail'] = document.getElementById('q20-detail').value;
+  const q11Checked = Array.from(document.querySelectorAll('input[name="q11"]:checked')).map(cb => cb.value);
+  data.answers['q11'] = q11Checked.join(', ');
+  if (q11Checked.includes('其他')) data.answers['q11'] += '（' + document.getElementById('q11-other').value + '）';
+  return data;
+}
+
+function validateAll(data) {
+  if (!data.agentId) return '请业务员填写工号';
+  if (!data.agentName) return '请业务员填写姓名';
+  if (!data.customerName) return '请填写姓名';
+  if (!data.customerId) return '请填写身份证号码';
+  if (!data.answers['q5']) return '请填写联系电话';
+
+  const isP4P5 = document.getElementById('p4p5Checkbox').checked;
+  for (let i = 1; i <= 29; i++) {
+    if (!isP4P5 && i >= 21 && i <= 25) continue;
+    if (!data.answers['q' + i]) return '第' + i + '题尚未作答';
+  }
+  if (!data.hasSignature) return '请投保人完成电子签名';
+  return null;
+}
+
+async function submitQuestionnaire() {
+  const data = collectData();
+  const error = validateAll(data);
+  if (error) { alert('⚠️ ' + error); return; }
+
+  const btn = document.querySelector('.nav-btn-submit');
+  btn.disabled = true;
+  btn.textContent = '⏳ 正在保存...';
+
+  try {
+    // Track with Umami
+    if (typeof umami !== 'undefined') {
+      umami.track('questionnaire_submit', {
+        agent_id: data.agentId,
+        customer_name: data.customerName,
+        customer_id: data.customerId.substring(0, 6) + '****',
+        is_p4p5: data.isP4P5,
+        fill_date: data.fillDate
+      });
+    }
+
+    // Hide interactive elements before screenshot
+    const nav = document.querySelector('.nav-buttons');
+    const sigActions = document.querySelector('.signature-actions');
+    const stepBar = document.getElementById('stepBar');
+    const footer = document.querySelector('.footer-brand');
+    nav.style.display = 'none';
+    sigActions.style.display = 'none';
+    stepBar.style.display = 'none';
+    footer.style.display = 'none';
+
+    // Add watermark
+    const container = document.getElementById('questionnaire');
+    const watermark = document.createElement('div');
+    watermark.style.cssText = 'text-align:center;padding:12px;background:#FEF2F2;border-bottom:2px solid #FCA5A5;margin-bottom:16px;font-size:13px;color:#991B1B;';
+    watermark.textContent = '问卷编号：' + data.agentId + '-' + Date.now() + ' | 生成时间：' + new Date().toLocaleString('zh-CN') + ' | 业务员：' + (data.agentName || '') + ' | 民生保险安徽分公司';
+    container.insertBefore(watermark, container.firstChild.nextSibling);
+
+    const canvasShot = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+
+    // Restore
+    container.removeChild(watermark);
+    nav.style.display = '';
+    sigActions.style.display = '';
+    stepBar.style.display = '';
+    footer.style.display = '';
+
+    // Download
+    const link = document.createElement('a');
+    link.download = '老年人适当性评估问卷_' + data.customerName + '_' + data.fillDate + '.png';
+    link.href = canvasShot.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    btn.textContent = '✅ 已保存';
+    alert('✅ 问卷已保存成功！\n\n问卷图片已下载到您的手机相册。\n\n问卷编号：' + data.agentId + '-' + Date.now() + '\n业务员：' + (data.agentName || ''));
+
+    setTimeout(() => { btn.disabled = false; btn.textContent = '✅ 确认提交并保存'; }, 3000);
+
+  } catch (err) {
+    console.error(err);
+    btn.disabled = false; btn.textContent = '✅ 确认提交并保存';
+    alert('❌ 保存失败，请重试。错误：' + err.message);
+  }
+}
+</script>
+</body>
+</html>
