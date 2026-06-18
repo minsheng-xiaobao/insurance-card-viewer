@@ -301,6 +301,10 @@ body {
   background: #FAFAFA;
   position: relative;
   overflow: hidden;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .signature-canvas-wrap canvas {
   width: 100%;
@@ -308,6 +312,9 @@ body {
   display: block;
   cursor: crosshair;
   touch-action: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .signature-placeholder {
   position: absolute;
@@ -318,6 +325,9 @@ body {
   font-size: 16px;
   pointer-events: none;
   text-align: center;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .signature-actions {
   display: flex;
@@ -976,6 +986,7 @@ const placeholder = document.getElementById('sigPlaceholder');
 let drawing = false;
 let strokes = [];
 let currentStroke = [];
+let signatureBackup = null; // 签名备份，防止resize清空
 
 function resizeCanvas() {
   const rect = wrap.getBoundingClientRect();
@@ -989,9 +1000,26 @@ function resizeCanvas() {
   ctx.lineJoin = 'round';
   ctx.lineWidth = 2.5;
   ctx.strokeStyle = '#1F2937';
+  
+  // 从备份恢复签名（如果存在）
+  if (signatureBackup) {
+    const img = new Image();
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0, canvas.width / dpr, canvas.height / dpr);
+    };
+    img.src = signatureBackup;
+  }
 }
 resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+
+// 只在窗口真正大小变化时resize（避免滚动等误触发）
+let lastWindowWidth = window.innerWidth;
+window.addEventListener('resize', function() {
+  if (window.innerWidth !== lastWindowWidth) {
+    lastWindowWidth = window.innerWidth;
+    resizeCanvas();
+  }
+});
 
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
@@ -1002,6 +1030,7 @@ function getPos(e) {
 
 function startDraw(e) {
   e.preventDefault();
+  e.stopPropagation();
   drawing = true;
   const pos = getPos(e);
   currentStroke = [pos];
@@ -1012,6 +1041,7 @@ function startDraw(e) {
 function draw(e) {
   if (!drawing) return;
   e.preventDefault();
+  e.stopPropagation();
   const pos = getPos(e);
   currentStroke.push(pos);
   ctx.lineTo(pos.x, pos.y);
@@ -1022,26 +1052,41 @@ function endDraw(e) {
   drawing = false;
   strokes.push([...currentStroke]);
   currentStroke = [];
+  // 保存签名备份，防止resize清空
+  if (strokes.length > 0) {
+    signatureBackup = canvas.toDataURL('image/png');
+  }
 }
 
+// 鼠标事件
 canvas.addEventListener('mousedown', startDraw);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', endDraw);
 canvas.addEventListener('mouseleave', endDraw);
+
+// 触摸事件（必须passive:false才能阻止默认滚动）
 canvas.addEventListener('touchstart', startDraw, { passive: false });
 canvas.addEventListener('touchmove', draw, { passive: false });
 canvas.addEventListener('touchend', endDraw);
+canvas.addEventListener('touchcancel', endDraw);
 
 function clearSignature() {
   const dpr = window.devicePixelRatio || 1;
   ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
   strokes = [];
+  signatureBackup = null;
   placeholder.style.display = 'block';
 }
 function undoSignature() {
   if (strokes.length === 0) return;
   strokes.pop();
   redrawAll();
+  if (strokes.length > 0) {
+    signatureBackup = canvas.toDataURL('image/png');
+  } else {
+    signatureBackup = null;
+    placeholder.style.display = 'block';
+  }
 }
 function redrawAll() {
   const dpr = window.devicePixelRatio || 1;
