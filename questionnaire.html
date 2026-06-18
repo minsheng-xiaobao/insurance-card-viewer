@@ -418,16 +418,6 @@ body {
       <input type="text" class="text-input" id="agentName" placeholder="请输入业务员姓名">
     </div>
   </div>
-  <div class="agent-info-row">
-    <div class="field">
-      <div class="field-label">投保人姓名 <span style="color:#DC2626">*</span></div>
-      <input type="text" class="text-input" id="customerName" placeholder="请输入投保人姓名">
-    </div>
-    <div class="field">
-      <div class="field-label">投保人身份证号 <span style="color:#DC2626">*</span></div>
-      <input type="text" class="text-input" id="customerId" placeholder="请输入18位身份证号码">
-    </div>
-  </div>
 </div>
 
 <!-- ====== STEP 1: Customer Basic Info ====== -->
@@ -450,31 +440,33 @@ body {
   <div class="question">
     <label class="question-label"><span class="q-num">3.</span>出生日期</label>
     <div class="date-group">
-      <input type="number" class="text-input" id="q3-year" placeholder="年" min="1900" max="2025">
+      <input type="number" class="text-input" id="q3-year" placeholder="年" min="1900" max="2025" onchange="calcAge()">
       <span>年</span>
-      <input type="number" class="text-input" id="q3-month" placeholder="月" min="1" max="12">
+      <input type="number" class="text-input" id="q3-month" placeholder="月" min="1" max="12" onchange="calcAge()">
       <span>月</span>
-      <input type="number" class="text-input" id="q3-day" placeholder="日" min="1" max="31">
+      <input type="number" class="text-input" id="q3-day" placeholder="日" min="1" max="31" onchange="calcAge()">
       <span>日</span>
       <span>年龄：</span>
-      <input type="number" class="text-input" id="q3-age" placeholder="周岁" style="width:80px;" min="65" max="120">
+      <input type="number" class="text-input" id="q3-age" placeholder="周岁" style="width:80px;" min="65" max="120" readonly>
       <span>周岁</span>
     </div>
   </div>
 
   <div class="question">
     <label class="question-label"><span class="q-num">4.</span>身份证号码</label>
-    <input type="text" class="text-input" id="q4" maxlength="18" placeholder="请输入18位身份证号码">
+    <input type="text" class="text-input" id="q4" maxlength="18" placeholder="请输入18位身份证号码" onblur="validateIdCard()">
+    <div id="idCardError" style="color:#DC2626;font-size:14px;margin-top:6px;display:none;">⚠️ 身份证号码格式不正确，应为18位（最后一位可为X）</div>
   </div>
 
   <div class="question">
     <label class="question-label"><span class="q-num">5.</span>联系电话</label>
-    <input type="tel" class="text-input" id="q5" placeholder="请输入手机号码">
+    <input type="tel" class="text-input" id="q5" maxlength="11" placeholder="请输入11位手机号码" onblur="validatePhone()">
+    <div id="phoneError" style="color:#DC2626;font-size:14px;margin-top:6px;display:none;">⚠️ 手机号码应为11位数字</div>
   </div>
 
   <div class="question">
     <label class="question-label"><span class="q-num">6.</span>常住地址</label>
-    <input type="text" class="text-input" id="q6" placeholder="请输入详细地址">
+    <input type="text" class="text-input" id="q6" placeholder="请精确到门牌号（如：XX省XX市XX区XX路XX号XX室）">
   </div>
 
   <div class="nav-buttons">
@@ -578,29 +570,30 @@ body {
     <div class="options" id="opts-q14">
       <div class="option" onclick="selectRadio('q14','趸交')"><input type="radio" name="q14" value="趸交" id="q14-1"><span class="option-text">趸交</span></div>
       <div class="option" onclick="selectRadio('q14','年期交')"><input type="radio" name="q14" value="年期交" id="q14-2"><span class="option-text">年期交</span></div>
-      <div class="option" onclick="selectRadio('q14','半年交')"><input type="radio" name="q14" value="半年交" id="q14-3"><span class="option-text">半年交</span></div>
-      <div class="option" onclick="selectRadio('q14','季交')"><input type="radio" name="q14" value="季交" id="q14-4"><span class="option-text">季交</span></div>
-      <div class="option" onclick="selectRadio('q14','月交')"><input type="radio" name="q14" value="月交" id="q14-5"><span class="option-text">月交</span></div>
     </div>
   </div>
 
   <div class="question">
     <label class="question-label"><span class="q-num">15.</span>个人月均收入</label>
     <div class="options" id="opts-q15">
-      <div class="option" onclick="selectRadio('q15','2000元及以下')"><input type="radio" name="q15" value="2000元及以下" id="q15-1"><span class="option-text">2000元及以下</span></div>
-      <div class="option" onclick="selectRadio('q15','2001-5000元')"><input type="radio" name="q15" value="2001-5000元" id="q15-2"><span class="option-text">2001-5000元</span></div>
-      <div class="option" onclick="selectRadio('q15','5001-10000元')"><input type="radio" name="q15" value="5001-10000元" id="q15-3"><span class="option-text">5001-10000元</span></div>
-      <div class="option" onclick="selectRadio('q15','10001元以上')"><input type="radio" name="q15" value="10001元以上" id="q15-4"><span class="option-text">10001元以上</span></div>
+      <div class="option" onclick="selectRadio('q15','2000元以下')"><input type="radio" name="q15" value="2000元以下" id="q15-1"><span class="option-text">2000元以下</span></div>
+      <div class="option" onclick="selectRadio('q15','2000-5000元')"><input type="radio" name="q15" value="2000-5000元" id="q15-2"><span class="option-text">2000-5000元</span></div>
+      <div class="option" onclick="selectRadio('q15','5000-10000元')"><input type="radio" name="q15" value="5000-10000元" id="q15-3"><span class="option-text">5000-10000元</span></div>
+      <div class="option" onclick="selectRadio('q15','10000-20000元')"><input type="radio" name="q15" value="10000-20000元" id="q15-4"><span class="option-text">10000-20000元</span></div>
+      <div class="option" onclick="selectRadio('q15','20000-50000元')"><input type="radio" name="q15" value="20000-50000元" id="q15-5"><span class="option-text">20000-50000元</span></div>
+      <div class="option" onclick="selectRadio('q15','50000元以上')"><input type="radio" name="q15" value="50000元以上" id="q15-6"><span class="option-text">50000元以上</span></div>
     </div>
   </div>
 
   <div class="question">
     <label class="question-label"><span class="q-num">16.</span>家庭月均总收入</label>
     <div class="options" id="opts-q16">
-      <div class="option" onclick="selectRadio('q16','5000元及以下')"><input type="radio" name="q16" value="5000元及以下" id="q16-1"><span class="option-text">5000元及以下</span></div>
-      <div class="option" onclick="selectRadio('q16','5001-10000元')"><input type="radio" name="q16" value="5001-10000元" id="q16-2"><span class="option-text">5001-10000元</span></div>
-      <div class="option" onclick="selectRadio('q16','10001-20000元')"><input type="radio" name="q16" value="10001-20000元" id="q16-3"><span class="option-text">10001-20000元</span></div>
-      <div class="option" onclick="selectRadio('q16','20001元以上')"><input type="radio" name="q16" value="20001元以上" id="q16-4"><span class="option-text">20001元以上</span></div>
+      <div class="option" onclick="selectRadio('q16','5000元以下')"><input type="radio" name="q16" value="5000元以下" id="q16-1"><span class="option-text">5000元以下</span></div>
+      <div class="option" onclick="selectRadio('q16','5000-10000元')"><input type="radio" name="q16" value="5000-10000元" id="q16-2"><span class="option-text">5000-10000元</span></div>
+      <div class="option" onclick="selectRadio('q16','10000-20000元')"><input type="radio" name="q16" value="10000-20000元" id="q16-3"><span class="option-text">10000-20000元</span></div>
+      <div class="option" onclick="selectRadio('q16','20000-50000元')"><input type="radio" name="q16" value="20000-50000元" id="q16-4"><span class="option-text">20000-50000元</span></div>
+      <div class="option" onclick="selectRadio('q16','50000-100000元')"><input type="radio" name="q16" value="50000-100000元" id="q16-5"><span class="option-text">50000-100000元</span></div>
+      <div class="option" onclick="selectRadio('q16','100000元以上')"><input type="radio" name="q16" value="100000元以上" id="q16-6"><span class="option-text">100000元以上</span></div>
     </div>
   </div>
 
@@ -779,14 +772,12 @@ body {
   <!-- Date -->
   <div class="question" style="border-left-color:#9CA3AF;">
     <label class="question-label">填写日期</label>
-    <div class="date-group">
-      <input type="number" class="text-input" id="fillYear" placeholder="年">
-      <span>年</span>
-      <input type="number" class="text-input" id="fillMonth" placeholder="月">
-      <span>月</span>
-      <input type="number" class="text-input" id="fillDay" placeholder="日">
-      <span>日</span>
+    <div style="padding: 14px 16px; background: #F3F4F6; border-radius: 10px; font-size: 18px; color: #374151; font-weight: 600;">
+      <span id="fillDateDisplay"></span>
     </div>
+    <input type="hidden" id="fillYear">
+    <input type="hidden" id="fillMonth">
+    <input type="hidden" id="fillDay">
   </div>
 
   <div class="nav-buttons">
@@ -921,12 +912,59 @@ function toggleP4P5() {
 }
 
 // =====================
-// Auto-fill date
+// Auto-fill date (readonly)
 // =====================
 const today = new Date();
-document.getElementById('fillYear').value = today.getFullYear();
-document.getElementById('fillMonth').value = today.getMonth() + 1;
-document.getElementById('fillDay').value = today.getDate();
+const year = today.getFullYear();
+const month = today.getMonth() + 1;
+const day = today.getDate();
+document.getElementById('fillYear').value = year;
+document.getElementById('fillMonth').value = month;
+document.getElementById('fillDay').value = day;
+document.getElementById('fillDateDisplay').textContent = year + '年' + month + '月' + day + '日';
+
+// =====================
+// Age auto-calculation
+// =====================
+function calcAge() {
+  const y = document.getElementById('q3-year').value;
+  const m = document.getElementById('q3-month').value;
+  const d = document.getElementById('q3-day').value;
+  if (!y || !m || !d) return;
+  
+  const birth = new Date(y, m - 1, d);
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const monthDiff = now.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+    age--;
+  }
+  document.getElementById('q3-age').value = age;
+}
+
+// =====================
+// Validation helpers
+// =====================
+function validateIdCard() {
+  const val = document.getElementById('q4').value.trim();
+  const error = document.getElementById('idCardError');
+  const pattern = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+  if (val && !pattern.test(val)) {
+    error.style.display = 'block';
+  } else {
+    error.style.display = 'none';
+  }
+}
+
+function validatePhone() {
+  const val = document.getElementById('q5').value.trim();
+  const error = document.getElementById('phoneError');
+  if (val && !/^1[3-9]\d{9}$/.test(val)) {
+    error.style.display = 'block';
+  } else {
+    error.style.display = 'none';
+  }
+}
 
 // =====================
 // Signature Canvas
