@@ -280,71 +280,117 @@ body {
   cursor: not-allowed;
 }
 
-/* Signature */
-.signature-section {
-  background: #fff;
-  border: 3px solid #FEE2E2;
-  border-radius: 14px;
+/* Signature popup */
+.sig-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
-  margin-bottom: 20px;
 }
-.signature-section-title {
-  font-size: 20px;
+.sig-popup {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.sig-popup-title {
+  font-size: 18px;
   font-weight: 700;
-  color: #1F2937;
-  margin-bottom: 16px;
   text-align: center;
+  margin-bottom: 12px;
+  color: #1F2937;
 }
-.signature-canvas-wrap {
+.sig-popup-hint {
+  font-size: 14px;
+  color: #6B7280;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.sig-popup-canvas-wrap {
   border: 2px dashed #CBD5E1;
   border-radius: 12px;
   background: #FAFAFA;
-  position: relative;
   overflow: hidden;
   touch-action: none;
   -webkit-touch-callout: none;
   user-select: none;
   -webkit-user-select: none;
 }
-.signature-canvas-wrap canvas {
+.sig-popup-canvas-wrap canvas {
   width: 100%;
-  height: 240px;
+  height: 280px;
   display: block;
   cursor: crosshair;
   touch-action: none;
-  -webkit-touch-callout: none;
-  user-select: none;
-  -webkit-user-select: none;
 }
-.signature-placeholder {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #9CA3AF;
-  font-size: 16px;
-  pointer-events: none;
-  text-align: center;
-  -webkit-touch-callout: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
-.signature-actions {
+.sig-popup-actions {
   display: flex;
   gap: 12px;
-  margin-top: 14px;
-  justify-content: center;
+  margin-top: 16px;
 }
-.signature-btn {
-  padding: 12px 24px;
-  border: 2px solid #D1D5DB;
-  background: #fff;
-  border-radius: 8px;
+.sig-popup-btn {
+  flex: 1;
+  padding: 14px;
   font-size: 16px;
-  color: #374151;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
   font-family: inherit;
-  font-weight: 600;
+  -webkit-appearance: none;
+  text-align: center;
+}
+.sig-popup-btn-clear {
+  background: #F3F4F6;
+  color: #374151;
+}
+.sig-popup-btn-done {
+  background: #FF6B6B;
+  color: #fff;
+}
+
+/* Signature preview on page */
+.sig-preview-wrap {
+  background: #fff;
+  border: 2px solid #FEE2E2;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.sig-preview-wrap .sig-preview-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 16px;
+}
+.sig-preview-img {
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  background: #FAFAFA;
+  max-width: 100%;
+  height: 200px;
+  object-fit: contain;
+}
+.sig-start-btn {
+  display: inline-block;
+  padding: 16px 48px;
+  background: #FF6B6B;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-appearance: none;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
 }
 
 /* Declaration */
@@ -766,16 +812,15 @@ body {
     本人确认以上所填信息真实、准确、完整，无隐瞒、虚假情况。本人知晓提供虚假信息可能影响适当性评估结果及自身权益。
   </div>
 
-  <!-- Signature -->
-  <div class="signature-section">
-    <div class="signature-section-title">✍️ 投保人签字</div>
-    <div class="signature-canvas-wrap" id="signatureWrap">
-      <canvas id="signatureCanvas"></canvas>
-      <div class="signature-placeholder" id="sigPlaceholder">请用手指在此区域签名</div>
+  <!-- Signature preview on page -->
+  <div class="sig-preview-wrap" id="sigPreviewWrap">
+    <div class="sig-preview-title">✍️ 投保人签字</div>
+    <div id="sigPreviewArea">
+      <img id="sigPreviewImg" class="sig-preview-img" style="display:none;" alt="签名预览">
+      <div style="padding:40px;color:#9CA3AF;font-size:16px;">尚未签名，请点击下方按钮开始签名</div>
     </div>
-    <div class="signature-actions">
-      <button class="signature-btn" onclick="clearSignature()">🗑️ 清空</button>
-      <button class="signature-btn" onclick="undoSignature()">↩️ 撤销</button>
+    <div style="margin-top:16px;">
+      <button class="sig-start-btn" onclick="openSigPopup()">✍️ 开始签名</button>
     </div>
   </div>
 
@@ -982,162 +1027,134 @@ function validatePhone() {
 // =====================
 // Signature Canvas
 // =====================
-const canvas = document.getElementById('signatureCanvas');
-const ctx = canvas.getContext('2d');
-const wrap = document.getElementById('signatureWrap');
-const placeholder = document.getElementById('sigPlaceholder');
-let drawing = false;
-let strokes = [];
-let currentStroke = [];
-let lastCanvasWidth = 0;
-let lastCanvasHeight = 0;
+// =====================
+// Signature Popup Logic
+// =====================
+let sigPopupCanvas = null;
+let sigPopupCtx = null;
+let sigPopupDrawing = false;
+let sigPopupStrokes = [];
+let sigPopupCurrentStroke = [];
+let savedSignatureData = null; // 保存的签名图片 dataURL
 
-function initCanvas() {
-  const rect = wrap.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
-  const w = Math.round(rect.width * dpr);
-  const h = Math.round(240 * dpr);
-  
-  canvas.width = w;
-  canvas.height = h;
-  canvas.style.width = rect.width + 'px';
-  canvas.style.height = '240px';
-  lastCanvasWidth = w;
-  lastCanvasHeight = h;
-  
-  // 使用 setTransform 重置并设置变换矩阵，避免 scale 累积
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = 2.5;
-  ctx.strokeStyle = '#1F2937';
+function openSigPopup() {
+  // 如果已有签名，先清空
+  sigPopupStrokes = [];
+  sigPopupCurrentStroke = [];
+
+  // 创建弹窗 overlay
+  const overlay = document.createElement('div');
+  overlay.className = 'sig-popup-overlay';
+  overlay.id = 'sigPopupOverlay';
+  overlay.innerHTML = `
+    <div class="sig-popup">
+      <div class="sig-popup-title">✍️ 请用手指在下方区域签名</div>
+      <div class="sig-popup-hint">签名完成后点击"完成签名"</div>
+      <div class="sig-popup-canvas-wrap" id="sigPopupCanvasWrap">
+        <canvas id="sigPopupCanvas"></canvas>
+      </div>
+      <div class="sig-popup-actions">
+        <button class="sig-popup-btn sig-popup-btn-clear" onclick="clearSigPopup()">🗑️ 重新签名</button>
+        <button class="sig-popup-btn sig-popup-btn-done" onclick="doneSigPopup()">✅ 完成签名</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden'; // 禁止页面滚动
+
+  // 初始化弹窗 canvas
+  initSigPopupCanvas();
 }
 
-function resizeCanvas() {
+function initSigPopupCanvas() {
+  const wrap = document.getElementById('sigPopupCanvasWrap');
+  sigPopupCanvas = document.getElementById('sigPopupCanvas');
+  sigPopupCtx = sigPopupCanvas.getContext('2d');
+
   const rect = wrap.getBoundingClientRect();
   const dpr = window.devicePixelRatio || 1;
-  const w = Math.round(rect.width * dpr);
-  const h = Math.round(240 * dpr);
-  
-  // 如果尺寸没变，不做任何事（避免滚动等误触发清空）
-  if (w === lastCanvasWidth && h === lastCanvasHeight) {
-    return;
-  }
-  
-  // 有签名时先备份
-  let backup = null;
-  if (strokes.length > 0) {
-    backup = canvas.toDataURL('image/png');
-  }
-  
-  // 更新尺寸
-  canvas.width = w;
-  canvas.height = h;
-  canvas.style.width = rect.width + 'px';
-  canvas.style.height = '240px';
-  lastCanvasWidth = w;
-  lastCanvasHeight = h;
-  
-  // 重置上下文（setTransform 不会累积）
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = 2.5;
-  ctx.strokeStyle = '#1F2937';
-  
-  // 恢复签名
-  if (backup) {
-    const img = new Image();
-    img.onload = function() {
-      ctx.drawImage(img, 0, 0, w / dpr, h / dpr);
-      placeholder.style.display = 'none';
-    };
-    img.src = backup;
-  }
+  sigPopupCanvas.width = Math.round(rect.width * dpr);
+  sigPopupCanvas.height = Math.round(280 * dpr);
+  sigPopupCanvas.style.width = rect.width + 'px';
+  sigPopupCanvas.style.height = '280px';
+
+  sigPopupCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  sigPopupCtx.lineCap = 'round';
+  sigPopupCtx.lineJoin = 'round';
+  sigPopupCtx.lineWidth = 2.5;
+  sigPopupCtx.strokeStyle = '#1F2937';
+
+  // 绑定事件
+  sigPopupCanvas.addEventListener('mousedown', startSigPopupDraw);
+  sigPopupCanvas.addEventListener('mousemove', sigPopupDraw);
+  sigPopupCanvas.addEventListener('mouseup', endSigPopupDraw);
+  sigPopupCanvas.addEventListener('mouseleave', endSigPopupDraw);
+  sigPopupCanvas.addEventListener('touchstart', startSigPopupDraw, { passive: false });
+  sigPopupCanvas.addEventListener('touchmove', sigPopupDraw, { passive: false });
+  sigPopupCanvas.addEventListener('touchend', endSigPopupDraw);
+  sigPopupCanvas.addEventListener('touchcancel', endSigPopupDraw);
 }
 
-initCanvas();
-
-// 只在窗口宽度真正变化时 resize
-let lastWindowWidth = window.innerWidth;
-window.addEventListener('resize', function() {
-  if (window.innerWidth !== lastWindowWidth) {
-    lastWindowWidth = window.innerWidth;
-    resizeCanvas();
-  }
-});
-
-function getPos(e) {
-  const rect = canvas.getBoundingClientRect();
+function getSigPopupPos(e) {
+  const rect = sigPopupCanvas.getBoundingClientRect();
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
   const clientY = e.touches ? e.touches[0].clientY : e.clientY;
   return { x: clientX - rect.left, y: clientY - rect.top };
 }
 
-function startDraw(e) {
+function startSigPopupDraw(e) {
   e.preventDefault();
-  drawing = true;
-  const pos = getPos(e);
-  currentStroke = [pos];
-  ctx.beginPath();
-  ctx.moveTo(pos.x, pos.y);
-  placeholder.style.display = 'none';
+  sigPopupDrawing = true;
+  const pos = getSigPopupPos(e);
+  sigPopupCurrentStroke = [pos];
+  sigPopupCtx.beginPath();
+  sigPopupCtx.moveTo(pos.x, pos.y);
 }
-function draw(e) {
-  if (!drawing) return;
+
+function sigPopupDraw(e) {
+  if (!sigPopupDrawing) return;
   e.preventDefault();
-  const pos = getPos(e);
-  currentStroke.push(pos);
-  ctx.lineTo(pos.x, pos.y);
-  ctx.stroke();
-}
-function endDraw(e) {
-  if (!drawing) return;
-  drawing = false;
-  strokes.push([...currentStroke]);
-  currentStroke = [];
+  const pos = getSigPopupPos(e);
+  sigPopupCurrentStroke.push(pos);
+  sigPopupCtx.lineTo(pos.x, pos.y);
+  sigPopupCtx.stroke();
 }
 
-// 鼠标事件
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', endDraw);
-canvas.addEventListener('mouseleave', endDraw);
+function endSigPopupDraw(e) {
+  if (!sigPopupDrawing) return;
+  sigPopupDrawing = false;
+  sigPopupStrokes.push([...sigPopupCurrentStroke]);
+  sigPopupCurrentStroke = [];
+}
 
-// 触摸事件
-canvas.addEventListener('touchstart', startDraw, { passive: false });
-canvas.addEventListener('touchmove', draw, { passive: false });
-canvas.addEventListener('touchend', endDraw);
-canvas.addEventListener('touchcancel', endDraw);
-
-function clearSignature() {
+function clearSigPopup() {
   const dpr = window.devicePixelRatio || 1;
-  ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
-  strokes = [];
-  placeholder.style.display = 'block';
+  sigPopupCtx.clearRect(0, 0, sigPopupCanvas.width / dpr, sigPopupCanvas.height / dpr);
+  sigPopupStrokes = [];
+  sigPopupCurrentStroke = [];
 }
-function undoSignature() {
-  if (strokes.length === 0) return;
-  strokes.pop();
-  redrawAll();
-}
-function redrawAll() {
-  const dpr = window.devicePixelRatio || 1;
-  ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
-  if (strokes.length === 0) { 
-    placeholder.style.display = 'block'; 
-    return; 
+
+function doneSigPopup() {
+  if (sigPopupStrokes.length === 0) {
+    alert('请先完成签名，再点击完成');
+    return;
   }
-  placeholder.style.display = 'none';
-  for (const stroke of strokes) {
-    if (stroke.length === 0) continue;
-    ctx.beginPath();
-    ctx.moveTo(stroke[0].x, stroke[0].y);
-    for (let i = 1; i < stroke.length; i++) {
-      ctx.lineTo(stroke[i].x, stroke[i].y);
-    }
-    ctx.stroke();
+  // 保存签名图片
+  savedSignatureData = sigPopupCanvas.toDataURL('image/png');
+
+  // 关闭弹窗
+  const overlay = document.getElementById('sigPopupOverlay');
+  if (overlay) {
+    document.body.removeChild(overlay);
   }
+  document.body.style.overflow = '';
+
+  // 更新预览
+  const img = document.getElementById('sigPreviewImg');
+  const area = document.getElementById('sigPreviewArea');
+  img.src = savedSignatureData;
+  img.style.display = 'block';
+  area.querySelector('div').style.display = 'none';
 }
 
 // =====================
@@ -1155,7 +1172,7 @@ function collectData() {
     customerId: document.getElementById('q4').value.trim(),
     fillDate: document.getElementById('fillYear').value + '-' + document.getElementById('fillMonth').value + '-' + document.getElementById('fillDay').value,
     answers: {},
-    hasSignature: strokes.length > 0,
+    hasSignature: !!savedSignatureData,
     isP4P5: document.getElementById('p4p5Checkbox').checked
   };
 
@@ -1243,17 +1260,7 @@ async function submitQuestionnaire() {
       allPanels[i].style.display = 'block';
     }
 
-    // 2.5 Convert signature canvas to image (prevents resize from clearing canvas)
-    const sigCanvas = document.getElementById('signatureCanvas');
-    let sigTempImg = null;
-    if (strokes.length > 0) {
-      sigTempImg = document.createElement('img');
-      sigTempImg.src = sigCanvas.toDataURL('image/png');
-      sigTempImg.style.cssText = 'width:100%;height:240px;display:block;';
-      sigTempImg.id = 'sigTempImg';
-      sigCanvas.parentNode.insertBefore(sigTempImg, sigCanvas);
-      sigCanvas.style.display = 'none';
-    }
+    // 2.5 Signature is already saved as <img> on page, no need to convert canvas
 
     // 3. Add watermark
     const container = document.getElementById('questionnaire');
@@ -1287,13 +1294,6 @@ async function submitQuestionnaire() {
     stepBar.style.display = '';
     footer.style.display = '';
     if (p4p5Toggle) p4p5Toggle.style.display = '';
-
-    // 5.5 Restore signature canvas
-    if (sigTempImg) {
-      sigTempImg.parentNode.removeChild(sigTempImg);
-      sigCanvas.style.display = '';
-      redrawAll(); // re-draw strokes on canvas
-    }
 
     // Download
     const link = document.createElement('a');
