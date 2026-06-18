@@ -1135,14 +1135,14 @@ async function submitQuestionnaire() {
     }
 
     // ====== PREPARE FOR SCREENSHOT ======
-    // 1. Hide interactive elements
-    const nav = document.querySelector('.nav-buttons');
-    const sigActions = document.querySelector('.signature-actions');
+    // 1. Hide ALL interactive elements (must use querySelectorAll for multiple elements)
+    const allNavs = document.querySelectorAll('.nav-buttons');
+    const allSigActions = document.querySelectorAll('.signature-actions');
     const stepBar = document.getElementById('stepBar');
     const footer = document.querySelector('.footer-brand');
     const p4p5Toggle = document.querySelector('.p4p5-toggle');
-    nav.style.display = 'none';
-    sigActions.style.display = 'none';
+    for (const nav of allNavs) nav.style.display = 'none';
+    for (const sa of allSigActions) sa.style.display = 'none';
     stepBar.style.display = 'none';
     footer.style.display = 'none';
     if (p4p5Toggle) p4p5Toggle.style.display = 'none';
@@ -1186,8 +1186,8 @@ async function submitQuestionnaire() {
       if (panelStates[i].hidden) allPanels[i].classList.add('hidden');
       allPanels[i].style.display = panelStates[i].display;
     }
-    nav.style.display = '';
-    sigActions.style.display = '';
+    for (const nav of allNavs) nav.style.display = '';
+    for (const sa of allSigActions) sa.style.display = '';
     stepBar.style.display = '';
     footer.style.display = '';
     if (p4p5Toggle) p4p5Toggle.style.display = '';
