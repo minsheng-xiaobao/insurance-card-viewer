@@ -1120,7 +1120,7 @@ async function submitQuestionnaire() {
 
   const btn = document.querySelector('.nav-btn-submit');
   btn.disabled = true;
-  btn.textContent = '⏳ 正在保存...';
+  btn.textContent = '⏳ 正在生成问卷...';
 
   try {
     // Track with Umami
@@ -1134,36 +1134,63 @@ async function submitQuestionnaire() {
       });
     }
 
-    // Hide interactive elements before screenshot
+    // ====== PREPARE FOR SCREENSHOT ======
+    // 1. Hide interactive elements
     const nav = document.querySelector('.nav-buttons');
     const sigActions = document.querySelector('.signature-actions');
     const stepBar = document.getElementById('stepBar');
     const footer = document.querySelector('.footer-brand');
+    const p4p5Toggle = document.querySelector('.p4p5-toggle');
     nav.style.display = 'none';
     sigActions.style.display = 'none';
     stepBar.style.display = 'none';
     footer.style.display = 'none';
+    if (p4p5Toggle) p4p5Toggle.style.display = 'none';
 
-    // Add watermark
+    // 2. Show ALL step panels so full questionnaire appears in screenshot
+    const allPanels = document.querySelectorAll('.step-panel');
+    const panelStates = [];
+    for (let i = 0; i < allPanels.length; i++) {
+      panelStates.push({
+        hidden: allPanels[i].classList.contains('hidden'),
+        display: allPanels[i].style.display
+      });
+      allPanels[i].classList.remove('hidden');
+      allPanels[i].style.display = 'block';
+    }
+
+    // 3. Add watermark
     const container = document.getElementById('questionnaire');
     const watermark = document.createElement('div');
     watermark.style.cssText = 'text-align:center;padding:12px;background:#FEF2F2;border-bottom:2px solid #FCA5A5;margin-bottom:16px;font-size:13px;color:#991B1B;';
     watermark.textContent = '问卷编号：' + data.agentId + '-' + Date.now() + ' | 生成时间：' + new Date().toLocaleString('zh-CN') + ' | 业务员：' + (data.agentName || '') + ' | 民生保险安徽分公司';
     container.insertBefore(watermark, container.firstChild.nextSibling);
 
+    // 4. Scroll to top for full screenshot
+    window.scrollTo(0, 0);
+    await new Promise(r => setTimeout(r, 300));
+
+    // 5. Capture full questionnaire
     const canvasShot = await html2canvas(container, {
       scale: 2,
       useCORS: true,
       backgroundColor: '#ffffff',
-      logging: false
+      logging: false,
+      windowWidth: document.documentElement.scrollWidth,
+      windowHeight: document.documentElement.scrollHeight
     });
 
-    // Restore
+    // ====== RESTORE AFTER SCREENSHOT ======
     container.removeChild(watermark);
+    for (let i = 0; i < allPanels.length; i++) {
+      if (panelStates[i].hidden) allPanels[i].classList.add('hidden');
+      allPanels[i].style.display = panelStates[i].display;
+    }
     nav.style.display = '';
     sigActions.style.display = '';
     stepBar.style.display = '';
     footer.style.display = '';
+    if (p4p5Toggle) p4p5Toggle.style.display = '';
 
     // Download
     const link = document.createElement('a');
